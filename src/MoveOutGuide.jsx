@@ -43,38 +43,85 @@ export default function MoveOutGuide() {
 
   const allJobs = {
     marina: [
-      { id: 1, name: "Kemah Boardwalk", type: "entertainment", pay: "$12-16/hr", distance: 2.5, hot: true },
+      // Food & Entertainment
+      { id: 1, name: "Kemah Boardwalk", type: "food", pay: "$12-16/hr", distance: 2.5, hot: true },
       { id: 2, name: "Landry's Seafood", type: "food", pay: "$10-22/hr", distance: 2.5, hot: true },
       { id: 3, name: "Bubba Gump Shrimp", type: "food", pay: "$11-20/hr", distance: 2.5 },
       { id: 4, name: "Saltgrass Steakhouse", type: "food", pay: "$10-18/hr", distance: 2.6 },
       { id: 5, name: "Starbucks Kemah", type: "food", pay: "$12-17/hr", distance: 2.3 },
-      { id: 6, name: "Boardwalk Inn", type: "hotel", pay: "$13-17/hr", distance: 2.5 },
-      { id: 7, name: "Baybrook Mall", type: "retail", pay: "$12-16/hr", distance: 8.2 },
-      { id: 8, name: "Target Webster", type: "retail", pay: "$15-18/hr", distance: 6.5, hot: true },
-      { id: 9, name: "Kroger Seabrook", type: "retail", pay: "$12-15/hr", distance: 2.8 },
-      { id: 10, name: "CVS Pharmacy", type: "retail", pay: "$12-18/hr", distance: 3.1 },
+      // Retail
+      { id: 6, name: "Baybrook Mall", type: "retail", pay: "$12-16/hr", distance: 8.2 },
+      { id: 7, name: "Target Webster", type: "retail", pay: "$15-18/hr", distance: 6.5, hot: true },
+      { id: 8, name: "Kroger Seabrook", type: "retail", pay: "$12-15/hr", distance: 2.8 },
+      // Hotels
+      { id: 9, name: "Boardwalk Inn", type: "hotel", pay: "$13-17/hr", distance: 2.5 },
+      { id: 10, name: "Hampton Inn Webster", type: "hotel", pay: "$13-16/hr", distance: 5.8 },
+      // 🔧 TRADES & CONSTRUCTION
+      { id: 11, name: "South Coast Welding", type: "trades", pay: "$16-24/hr", distance: 4.2, hot: true },
+      { id: 12, name: "Kirby Marine (Shipyard)", type: "trades", pay: "$17-25/hr", distance: 5.5, hot: true },
+      { id: 13, name: "Gulf Coast Boat Repair", type: "trades", pay: "$14-20/hr", distance: 3.8 },
+      { id: 14, name: "Clear Lake Construction", type: "construction", pay: "$15-22/hr", distance: 4.5, hot: true },
+      { id: 15, name: "Perry Homes (Framing Crew)", type: "construction", pay: "$16-24/hr", distance: 7.2, hot: true },
+      { id: 16, name: "ABC Roofing", type: "construction", pay: "$15-21/hr", distance: 6.1 },
+      { id: 17, name: "Marek Brothers Drywall", type: "construction", pay: "$14-20/hr", distance: 8.5 },
+      // 🚗 AUTO
+      { id: 18, name: "Caliber Collision", type: "auto", pay: "$14-22/hr", distance: 5.2, hot: true },
+      { id: 19, name: "Firestone Webster", type: "auto", pay: "$13-19/hr", distance: 6.0 },
+      { id: 20, name: "Take 5 Oil Change", type: "auto", pay: "$12-16/hr", distance: 4.8 },
+      { id: 21, name: "O'Reilly Auto Parts", type: "retail", pay: "$12-16/hr", distance: 3.5 },
+      // Warehouse & Labor
+      { id: 22, name: "Floor & Decor Warehouse", type: "warehouse", pay: "$14-18/hr", distance: 9.2 },
+      { id: 23, name: "84 Lumber Yard", type: "warehouse", pay: "$15-19/hr", distance: 7.8, hot: true },
+      { id: 24, name: "ABC Supply (Roofing)", type: "warehouse", pay: "$14-18/hr", distance: 8.1 },
     ],
     sandy: [
-      { id: 101, name: "Memorial City Mall", type: "retail", pay: "$12-18/hr", distance: 3.2, hot: true },
-      { id: 102, name: "Target Memorial", type: "retail", pay: "$15-18/hr", distance: 2.1, hot: true },
-      { id: 103, name: "H&M", type: "retail", pay: "$13-16/hr", distance: 3.2 },
-      { id: 104, name: "Four Points Sheraton", type: "hotel", pay: "$14-18/hr", distance: 1.8 },
-      { id: 105, name: "Embassy Suites", type: "hotel", pay: "$13-17/hr", distance: 2.3 },
-      { id: 106, name: "City Centre Restaurants", type: "food", pay: "$10-22/hr", distance: 4.1, hot: true },
-      { id: 107, name: "Chili's", type: "food", pay: "$10-18/hr", distance: 1.5 },
-      { id: 108, name: "Whataburger", type: "food", pay: "$11-15/hr", distance: 1.2 },
-      { id: 109, name: "Kroger Memorial", type: "retail", pay: "$12-16/hr", distance: 1.8 },
-      { id: 110, name: "Amazon Warehouse", type: "warehouse", pay: "$15-19/hr", distance: 12 },
+      // Food
+      { id: 101, name: "City Centre Restaurants", type: "food", pay: "$10-22/hr", distance: 4.1, hot: true },
+      { id: 102, name: "Chili's", type: "food", pay: "$10-18/hr", distance: 1.5 },
+      { id: 103, name: "Whataburger", type: "food", pay: "$11-15/hr", distance: 1.2 },
+      { id: 104, name: "Pappadeaux", type: "food", pay: "$12-24/hr", distance: 3.8 },
+      // Retail
+      { id: 105, name: "Memorial City Mall", type: "retail", pay: "$12-18/hr", distance: 3.2, hot: true },
+      { id: 106, name: "Target Memorial", type: "retail", pay: "$15-18/hr", distance: 2.1, hot: true },
+      { id: 107, name: "Kroger Memorial", type: "retail", pay: "$12-16/hr", distance: 1.8 },
+      { id: 108, name: "AutoZone", type: "retail", pay: "$12-17/hr", distance: 2.4 },
+      // Hotels
+      { id: 109, name: "Four Points Sheraton", type: "hotel", pay: "$14-18/hr", distance: 1.8 },
+      { id: 110, name: "Embassy Suites", type: "hotel", pay: "$13-17/hr", distance: 2.3 },
+      // 🔧 TRADES
+      { id: 111, name: "ABC Home & Commercial HVAC", type: "trades", pay: "$15-23/hr", distance: 5.5, hot: true },
+      { id: 112, name: "Baker Hughes (Entry Level)", type: "trades", pay: "$18-26/hr", distance: 8.2, hot: true },
+      { id: 113, name: "McCoy's Building Supply", type: "trades", pay: "$14-18/hr", distance: 6.1 },
+      { id: 114, name: "Johnstone Supply HVAC", type: "trades", pay: "$13-17/hr", distance: 4.8 },
+      // 🏗️ CONSTRUCTION
+      { id: 115, name: "D.R. Horton (Framing)", type: "construction", pay: "$16-24/hr", distance: 6.5, hot: true },
+      { id: 116, name: "Weekley Homes", type: "construction", pay: "$15-22/hr", distance: 7.8, hot: true },
+      { id: 117, name: "Turner Construction", type: "construction", pay: "$17-25/hr", distance: 9.5 },
+      { id: 118, name: "SpawGlass Concrete", type: "construction", pay: "$16-22/hr", distance: 8.2 },
+      { id: 119, name: "BrandSafway Scaffolding", type: "construction", pay: "$15-21/hr", distance: 7.1, hot: true },
+      { id: 120, name: "Painter's Union Local 79", type: "construction", pay: "$14-20/hr", distance: 5.8 },
+      // 🚗 AUTO
+      { id: 121, name: "Christian Brothers Auto", type: "auto", pay: "$13-20/hr", distance: 3.2 },
+      { id: 122, name: "Caliber Collision", type: "auto", pay: "$14-22/hr", distance: 4.5, hot: true },
+      { id: 123, name: "Jiffy Lube", type: "auto", pay: "$12-16/hr", distance: 2.1 },
+      { id: 124, name: "Discount Tire", type: "auto", pay: "$13-18/hr", distance: 3.8, hot: true },
+      // Warehouse & Labor
+      { id: 125, name: "Amazon Warehouse", type: "warehouse", pay: "$15-19/hr", distance: 12 },
+      { id: 126, name: "Floor & Decor", type: "warehouse", pay: "$14-18/hr", distance: 5.2 },
+      { id: 127, name: "Ferguson Plumbing Supply", type: "warehouse", pay: "$14-19/hr", distance: 4.8 },
+      { id: 128, name: "Two Men and a Truck", type: "warehouse", pay: "$14-20/hr", distance: 6.2, hot: true },
     ]
   };
 
   const jobTypes = [
     { id: 'all', label: 'All', icon: '🎯' },
+    { id: 'construction', label: 'Build', icon: '🏗️' },
+    { id: 'trades', label: 'Trades', icon: '🔧' },
+    { id: 'auto', label: 'Auto', icon: '🚗' },
+    { id: 'warehouse', label: 'Labor', icon: '📦' },
     { id: 'food', label: 'Food', icon: '🍔' },
     { id: 'retail', label: 'Retail', icon: '🛍️' },
-    { id: 'entertainment', label: 'Fun', icon: '🎢' },
     { id: 'hotel', label: 'Hotel', icon: '🏨' },
-    { id: 'warehouse', label: 'Warehouse', icon: '📦' },
   ];
 
   const RENT = hasRoommate ? 325 : 650;
