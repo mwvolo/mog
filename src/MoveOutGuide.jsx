@@ -198,7 +198,7 @@ export default function MoveOutGuide() {
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              Move Out Guide
+              Your Move 🎯
             </h1>
             
             {/* Location Toggle */}
@@ -256,6 +256,13 @@ export default function MoveOutGuide() {
         {/* BUDGET TAB */}
         {activeTab === 'budget' && (
           <div className="space-y-4">
+            
+            {/* Quick context */}
+            <div className="text-center py-2">
+              <p className="text-gray-500 text-sm">
+                Can you afford to move out? Let's find out 👇
+              </p>
+            </div>
             
             {/* Income Card */}
             <div className="bg-gray-900 rounded-2xl p-4">
@@ -340,31 +347,47 @@ export default function MoveOutGuide() {
               isTight ? 'bg-yellow-500/20 border-2 border-yellow-500/50' :
               'bg-red-500/20 border-2 border-red-500/50'
             }`}>
-              <div className="flex justify-between items-center mb-3">
-                <span className="font-bold text-lg">
-                  {isGood ? '✅ Looking Good!' : isTight ? '⚠️ Tight Budget' : '🚨 Not Enough'}
-                </span>
-                <div className={`text-3xl font-black ${
+              <div className="text-center mb-4">
+                <span className={`text-4xl font-black ${
                   isGood ? 'text-green-400' : isTight ? 'text-yellow-400' : 'text-red-400'
                 }`}>
-                  {remaining >= 0 ? '+' : ''}{remaining.toFixed(0)}
-                </div>
+                  {remaining >= 0 ? '+' : ''}${remaining.toFixed(0)}
+                </span>
+                <p className="text-sm text-gray-400 mt-1">left over each month</p>
+              </div>
+              
+              <div className="text-center mb-4">
+                <span className="font-bold text-lg">
+                  {isGood ? '✅ You can do this!' : isTight ? '⚠️ Tight but possible' : '🚨 Not quite there yet'}
+                </span>
               </div>
               
               <div className="grid grid-cols-2 gap-3 text-center">
-                <div className="bg-black/20 rounded-xl p-2">
-                  <div className="text-xs text-gray-400">Income</div>
-                  <div className="font-bold text-green-400">${netMonthly.toFixed(0)}</div>
+                <div className="bg-black/20 rounded-xl p-3">
+                  <div className="text-xs text-gray-400">You make</div>
+                  <div className="font-bold text-green-400 text-lg">${netMonthly.toFixed(0)}</div>
                 </div>
-                <div className="bg-black/20 rounded-xl p-2">
-                  <div className="text-xs text-gray-400">Expenses</div>
-                  <div className="font-bold text-red-400">-${totalExpenses}</div>
+                <div className="bg-black/20 rounded-xl p-3">
+                  <div className="text-xs text-gray-400">You spend</div>
+                  <div className="font-bold text-red-400 text-lg">${totalExpenses}</div>
                 </div>
               </div>
               
               {isBad && (
-                <p className="text-sm mt-3 text-red-200">
-                  You're ${Math.abs(remaining).toFixed(0)} short. Try more hours, a roommate, or cut spending.
+                <div className="mt-4 p-3 bg-black/20 rounded-xl">
+                  <p className="text-sm text-red-200 font-medium">💡 Try:</p>
+                  <ul className="text-sm text-gray-300 mt-1 space-y-1">
+                    <li>• More hours (you're at {hoursPerWeek}/week)</li>
+                    <li>• Higher paying job (construction pays $16-24/hr)</li>
+                    <li>• Get a roommate (cuts rent to $325)</li>
+                    <li>• Cut some expenses above</li>
+                  </ul>
+                </div>
+              )}
+              
+              {isTight && (
+                <p className="text-sm mt-3 text-yellow-200 text-center">
+                  You'll make it, but no room for surprises. Build that emergency fund!
                 </p>
               )}
             </div>
@@ -381,6 +404,9 @@ export default function MoveOutGuide() {
             }`}>
               <h2 className="font-bold text-lg">{loc.emoji} Jobs Near {loc.name}</h2>
               <p className="text-gray-400 text-sm mt-1">{loc.vibe}</p>
+              <p className="text-xs text-gray-500 mt-2">
+                🏗️ Construction & trades jobs at the top — good pay, real skills.
+              </p>
             </div>
 
             {/* Job Type Filter */}
@@ -428,9 +454,9 @@ export default function MoveOutGuide() {
                 </div>
                 
                 {/* Job pins */}
-                {filteredJobs.slice(0, 8).map((job, i) => {
-                  const angle = (i / 8) * 2 * Math.PI - Math.PI / 2;
-                  const radius = Math.min(job.distance / 10, 1) * 38;
+                {filteredJobs.slice(0, 12).map((job, i) => {
+                  const angle = (i / 12) * 2 * Math.PI - Math.PI / 2;
+                  const radius = Math.min(job.distance / 12, 1) * 42;
                   const x = Math.cos(angle) * radius;
                   const y = Math.sin(angle) * radius;
                   
@@ -440,52 +466,68 @@ export default function MoveOutGuide() {
                     entertainment: 'bg-purple-500',
                     hotel: 'bg-blue-500',
                     warehouse: 'bg-amber-600',
+                    construction: 'bg-yellow-500',
+                    trades: 'bg-emerald-500',
+                    auto: 'bg-red-500',
                   };
-                  const icons = { food: '🍔', retail: '🛍️', entertainment: '🎢', hotel: '🏨', warehouse: '📦' };
+                  const icons = { 
+                    food: '🍔', retail: '🛍️', entertainment: '🎢', hotel: '🏨', warehouse: '📦',
+                    construction: '🏗️', trades: '🔧', auto: '🚗'
+                  };
                   
                   return (
                     <div
                       key={job.id}
-                      className={`absolute w-9 h-9 ${colors[job.type]} rounded-full flex items-center justify-center shadow-lg border-2 border-white/50 transition-transform active:scale-125 ${job.hot ? 'animate-pulse' : ''}`}
+                      className={`absolute w-9 h-9 ${colors[job.type] || 'bg-gray-500'} rounded-full flex items-center justify-center shadow-lg border-2 border-white/50 transition-transform active:scale-125 ${job.hot ? 'animate-pulse' : ''}`}
                       style={{
                         left: `calc(50% + ${x}%)`,
                         top: `calc(50% + ${y}%)`,
                         transform: 'translate(-50%, -50%)',
                       }}
                     >
-                      {icons[job.type]}
+                      {icons[job.type] || '💼'}
                     </div>
                   );
                 })}
               </div>
               
               {/* Legend */}
-              <div className="flex flex-wrap justify-center gap-3 mt-4 pt-3 border-t border-gray-800 text-sm">
-                <span>🍔 Food</span>
-                <span>🛍️ Retail</span>
-                <span>🎢 Fun</span>
-                <span>🏨 Hotel</span>
+              <div className="flex flex-wrap justify-center gap-2 mt-4 pt-3 border-t border-gray-800 text-xs">
+                <span className="bg-yellow-500/20 px-2 py-1 rounded-full">🏗️ Build</span>
+                <span className="bg-emerald-500/20 px-2 py-1 rounded-full">🔧 Trades</span>
+                <span className="bg-red-500/20 px-2 py-1 rounded-full">🚗 Auto</span>
+                <span className="bg-amber-600/20 px-2 py-1 rounded-full">📦 Labor</span>
+                <span className="bg-orange-500/20 px-2 py-1 rounded-full">🍔 Food</span>
+                <span className="bg-pink-500/20 px-2 py-1 rounded-full">🛍️ Retail</span>
               </div>
             </div>
 
             {/* Job List */}
             <div className="space-y-3">
-              {filteredJobs.map(job => (
-                <div key={job.id} className="bg-gray-900 rounded-xl p-4 active:bg-gray-800">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold">{job.name}</span>
-                        {job.hot && <span className="text-xs bg-red-500 px-2 py-0.5 rounded-full">🔥 Hiring</span>}
+              <p className="text-xs text-gray-500 px-1">🔥 = actively hiring now</p>
+              {filteredJobs.map(job => {
+                const icons = { 
+                  food: '🍔', retail: '🛍️', entertainment: '🎢', hotel: '🏨', warehouse: '📦',
+                  construction: '🏗️', trades: '🔧', auto: '🚗'
+                };
+                return (
+                  <div key={job.id} className="bg-gray-900 rounded-xl p-4 active:bg-gray-800">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{icons[job.type] || '💼'}</span>
+                          <span className="font-bold">{job.name}</span>
+                          {job.hot && <span className="text-xs bg-red-500 px-2 py-0.5 rounded-full">🔥 Hiring</span>}
+                        </div>
+                        <div className="text-sm text-gray-400 mt-1 ml-7">
+                          {job.distance} miles {!hasCar && job.distance > 5 && <span className="text-yellow-500">(far w/o car)</span>}
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-400 mt-1">
-                        {jobTypes.find(t => t.id === job.type)?.icon} {job.distance} miles away
-                      </div>
+                      <div className="text-green-400 font-bold text-lg">{job.pay}</div>
                     </div>
-                    <div className="text-green-400 font-bold">{job.pay}</div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -494,6 +536,84 @@ export default function MoveOutGuide() {
         {activeTab === 'location' && (
           <div className="space-y-4">
             
+            {/* The Deal Breakdown - Location Specific */}
+            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl p-4 border border-green-500/30">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold">🤝 The Family Deal</h3>
+                <span className="text-xs bg-green-500/30 text-green-300 px-2 py-1 rounded-full">
+                  {selectedLocation === 'marina' ? 'We cover the gap' : 'Fair deal'}
+                </span>
+              </div>
+              <p className="text-sm text-gray-400 mb-3">
+                Real talk: here's what this place actually costs us each month.
+              </p>
+              
+              {selectedLocation === 'marina' ? (
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between text-gray-400">
+                    <span>HOA fees</span>
+                    <span>$545/mo</span>
+                  </div>
+                  <div className="flex justify-between text-gray-400">
+                    <span>Property taxes</span>
+                    <span>$237/mo</span>
+                  </div>
+                  <div className="flex justify-between text-gray-400">
+                    <span>Insurance</span>
+                    <span>$88/mo</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-gray-700 text-gray-300">
+                    <span>Our actual cost</span>
+                    <span className="text-red-400 font-medium">$870/mo</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-green-500/30 font-bold text-lg">
+                    <span>What you pay</span>
+                    <span className="text-green-400">${RENT}/mo</span>
+                  </div>
+                  <div className="bg-green-500/10 rounded-lg p-2 mt-2">
+                    <p className="text-green-300 text-xs text-center">
+                      We're covering ${hasRoommate ? '545' : '220'}/mo so you can get started 💪
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between text-gray-400">
+                    <span>HOA fees</span>
+                    <span>$361/mo</span>
+                  </div>
+                  <div className="flex justify-between text-gray-400">
+                    <span>Property taxes</span>
+                    <span>$153/mo</span>
+                  </div>
+                  <div className="flex justify-between text-gray-400">
+                    <span>Insurance</span>
+                    <span>$53/mo</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-gray-700 text-gray-300">
+                    <span>Our actual cost</span>
+                    <span className="text-yellow-400 font-medium">$567/mo</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-green-500/30 font-bold text-lg">
+                    <span>What you pay</span>
+                    <span className="text-green-400">${RENT}/mo</span>
+                  </div>
+                  <div className="bg-yellow-500/10 rounded-lg p-2 mt-2">
+                    <p className="text-yellow-300 text-xs text-center">
+                      {hasRoommate 
+                        ? "Split rent = we're subsidizing you. Use it wisely!" 
+                        : "You're covering costs + small buffer for repairs. Fair deal!"}
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              <p className="text-xs text-gray-500 mt-3 italic">
+                Market rent: ${selectedLocation === 'marina' ? '900-1,100' : '700-900'}/mo. 
+                This is how life works — know your real costs.
+              </p>
+            </div>
+
             {/* Location Cards */}
             {Object.entries(locations).map(([key, loc]) => (
               <button
@@ -588,11 +708,30 @@ export default function MoveOutGuide() {
               )}
             </div>
 
+            {/* Interactive Map */}
+            <div className="bg-gray-900 rounded-2xl overflow-hidden">
+              <div className="p-3 border-b border-gray-800">
+                <h3 className="font-bold text-sm">🗺️ See the Area</h3>
+              </div>
+              <div className="relative w-full" style={{ paddingBottom: '75%' }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={selectedLocation === 'marina'
+                    ? "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13876.241726067012!2d-95.04383!3d29.5553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x863f62a3adfc7a9d%3A0x5a2e4e2ed5b8f0e!2sMarina%20Bay%20Condominiums!5e0!3m2!1sen!2sus!4v1705600000000!5m2!1sen!2sus"
+                    : "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13843.123456789012!2d-95.5580!3d29.7580!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640c3d23a8b5555%3A0x1234567890abcdef!2s11201%20Lynbrook%20Dr%2C%20Houston%2C%20TX%2077042!5e0!3m2!1sen!2sus!4v1705600000000!5m2!1sen!2sus"
+                  }
+                />
+              </div>
+            </div>
+
             {/* Map Link */}
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                 selectedLocation === 'marina'
-                  ? '3535 NASA Parkway Seabrook TX 77586'
+                  ? '4011 NASA Parkway Seabrook TX 77586'
                   : '11201 Lynbrook Dr Houston TX 77042'
               )}`}
               target="_blank"
@@ -690,6 +829,19 @@ export default function MoveOutGuide() {
                   </label>
                 ))}
               </div>
+            </div>
+
+            {/* Uncle Credit */}
+            <div className="text-center py-6">
+              <p className="text-gray-500 text-sm">
+                Built with 💜 by
+              </p>
+              <p className="text-gray-400 font-medium mt-1">
+                Uncle Mikey & Uncle Constantine
+              </p>
+              <p className="text-gray-600 text-xs mt-2">
+                We believe in you. Now go make it happen. 🚀
+              </p>
             </div>
           </div>
         )}
