@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/move-out-guide/', // Change this to your repo name
+  base: '/mog/', // Change this to your repo name
 })
