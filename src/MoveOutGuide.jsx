@@ -124,7 +124,9 @@ export default function MoveOutGuide() {
     { id: 'hotel', label: 'Hotel', icon: '🏨' },
   ];
 
-  const RENT = hasRoommate ? 325 : 650;
+  // Marina Bay: $650, Lynbrook: $550 (just covering costs)
+  const baseRent = selectedLocation === 'marina' ? 650 : 550;
+  const RENT = hasRoommate ? Math.round(baseRent / 2) : baseRent;
   const UTILITIES = hasRoommate ? 75 : 150;
 
   const loc = locations[selectedLocation];
@@ -572,7 +574,7 @@ export default function MoveOutGuide() {
                   </div>
                   <div className="bg-green-500/10 rounded-lg p-2 mt-2">
                     <p className="text-green-300 text-xs text-center">
-                      We're covering ${hasRoommate ? '545' : '220'}/mo so you can get started 💪
+                      We're covering $220/mo so you can get started 💪
                     </p>
                   </div>
                 </div>
@@ -598,11 +600,9 @@ export default function MoveOutGuide() {
                     <span>What you pay</span>
                     <span className="text-green-400">${RENT}/mo</span>
                   </div>
-                  <div className="bg-yellow-500/10 rounded-lg p-2 mt-2">
-                    <p className="text-yellow-300 text-xs text-center">
-                      {hasRoommate 
-                        ? "Split rent = we're subsidizing you. Use it wisely!" 
-                        : "You're covering costs + small buffer for repairs. Fair deal!"}
+                  <div className="bg-green-500/10 rounded-lg p-2 mt-2">
+                    <p className="text-green-300 text-xs text-center">
+                      Just covering our costs here — fair deal for everyone 🤝
                     </p>
                   </div>
                 </div>
