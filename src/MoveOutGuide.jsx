@@ -223,32 +223,6 @@ export default function MoveOutGuide() {
               </button>
             </div>
           </div>
-          
-          {/* Quick Settings Bar */}
-          <div className="flex items-center justify-between mt-3 text-sm">
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => setHasRoommate(!hasRoommate)}
-                className={`px-3 py-1.5 rounded-full transition-all ${
-                  hasRoommate ? 'bg-purple-500 text-white' : 'bg-gray-800 text-gray-400'
-                }`}
-              >
-                {hasRoommate ? '👥 Roommate' : '🧍 Solo'}
-              </button>
-              <button 
-                onClick={() => setHasCar(!hasCar)}
-                className={`px-3 py-1.5 rounded-full transition-all ${
-                  hasCar ? 'bg-green-500 text-white' : 'bg-gray-800 text-gray-400'
-                }`}
-              >
-                {hasCar ? '🚗 Car' : '🚶 No Car'}
-              </button>
-            </div>
-            <div className="text-right">
-              <span className="text-2xl font-black text-cyan-400">${RENT}</span>
-              <span className="text-gray-500">/mo</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -259,11 +233,88 @@ export default function MoveOutGuide() {
         {activeTab === 'budget' && (
           <div className="space-y-4">
             
-            {/* Quick context */}
-            <div className="text-center py-2">
-              <p className="text-gray-500 text-sm">
-                Can you afford to move out? Let's find out 👇
-              </p>
+            {/* Your Situation */}
+            <div className="bg-gray-900 rounded-2xl p-4">
+              <h2 className="font-bold text-lg mb-4">🤔 Your Situation</h2>
+              
+              {/* Roommate Question */}
+              <div className="mb-4">
+                <p className="text-gray-300 text-sm mb-2">Will you have a roommate?</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setHasRoommate(false)}
+                    className={`p-3 rounded-xl border-2 transition-all ${
+                      !hasRoommate 
+                        ? 'border-cyan-500 bg-cyan-500/20 text-white' 
+                        : 'border-gray-700 bg-gray-800 text-gray-400'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">🧍</div>
+                    <div className="font-medium">Solo</div>
+                    <div className="text-xs text-gray-500">${selectedLocation === 'marina' ? '650' : '550'}/mo rent</div>
+                  </button>
+                  <button
+                    onClick={() => setHasRoommate(true)}
+                    className={`p-3 rounded-xl border-2 transition-all ${
+                      hasRoommate 
+                        ? 'border-purple-500 bg-purple-500/20 text-white' 
+                        : 'border-gray-700 bg-gray-800 text-gray-400'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">👥</div>
+                    <div className="font-medium">Roommate</div>
+                    <div className="text-xs text-gray-500">${selectedLocation === 'marina' ? '325' : '275'}/mo each</div>
+                  </button>
+                </div>
+              </div>
+              
+              {/* Car Question */}
+              <div>
+                <p className="text-gray-300 text-sm mb-2">Do you have a car?</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setHasCar(false)}
+                    className={`p-3 rounded-xl border-2 transition-all ${
+                      !hasCar 
+                        ? 'border-green-500 bg-green-500/20 text-white' 
+                        : 'border-gray-700 bg-gray-800 text-gray-400'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">🚶</div>
+                    <div className="font-medium">No Car</div>
+                    <div className="text-xs text-gray-500">Save $400+/mo</div>
+                  </button>
+                  <button
+                    onClick={() => setHasCar(true)}
+                    className={`p-3 rounded-xl border-2 transition-all ${
+                      hasCar 
+                        ? 'border-yellow-500 bg-yellow-500/20 text-white' 
+                        : 'border-gray-700 bg-gray-800 text-gray-400'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">🚗</div>
+                    <div className="font-medium">Have a Car</div>
+                    <div className="text-xs text-gray-500">More job options</div>
+                  </button>
+                </div>
+                {!hasCar && selectedLocation === 'marina' && (
+                  <p className="text-yellow-400 text-xs mt-2">⚠️ Marina Bay really needs a car — limited transit</p>
+                )}
+              </div>
+            </div>
+            
+            {/* Rent Summary */}
+            <div className={`rounded-xl p-4 ${selectedLocation === 'marina' ? 'bg-cyan-500/20' : 'bg-orange-500/20'}`}>
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-gray-400 text-sm">{loc.name} rent</p>
+                  <p className="text-xs text-gray-500">{hasRoommate ? 'Split with roommate' : 'Living solo'}</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-3xl font-black text-white">${RENT}</span>
+                  <span className="text-gray-400">/mo</span>
+                </div>
+              </div>
             </div>
             
             {/* Income Card */}
