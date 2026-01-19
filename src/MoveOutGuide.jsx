@@ -12,6 +12,7 @@ export default function MoveOutGuide() {
   const [hoveredJob, setHoveredJob] = useState(null);
   
   const [expenses, setExpenses] = useState({
+    utilities: 150,
     food: 250,
     phone: 50,
     car: 150,
@@ -127,7 +128,6 @@ export default function MoveOutGuide() {
   // Marina Bay: $650, Lynbrook: $550 (just covering costs)
   const baseRent = selectedLocation === 'marina' ? 650 : 550;
   const RENT = hasRoommate ? Math.round(baseRent / 2) : baseRent;
-  const UTILITIES = hasRoommate ? 75 : 150;
 
   const loc = locations[selectedLocation];
   const jobs = allJobs[selectedLocation];
@@ -137,10 +137,10 @@ export default function MoveOutGuide() {
   const netMonthly = grossMonthly * 0.82; // ~18% taxes
 
   const totalExpenses = useMemo(() => {
-    let total = RENT + UTILITIES + expenses.food + expenses.phone + expenses.entertainment + expenses.savings + expenses.other;
+    let total = RENT + expenses.utilities + expenses.food + expenses.phone + expenses.entertainment + expenses.savings + expenses.other;
     if (hasCar) total += expenses.car + expenses.gas + expenses.carInsurance;
     return total;
-  }, [RENT, UTILITIES, hasCar, expenses]);
+  }, [RENT, hasCar, expenses]);
 
   const remaining = netMonthly - totalExpenses;
   const isGood = remaining >= 100;
@@ -373,12 +373,9 @@ export default function MoveOutGuide() {
                 <span className="text-gray-300">🏠 Rent</span>
                 <span className="font-bold">${RENT}</span>
               </div>
-              <div className="py-3 border-b border-gray-800 flex justify-between">
-                <span className="text-gray-300">💡 Utilities</span>
-                <span className="font-bold">${UTILITIES}</span>
-              </div>
               
               {/* Adjustable expenses */}
+              <ExpenseRow label="Utilities" icon="💡" value={expenses.utilities} onChange={(v) => setExpenses({...expenses, utilities: v})} max={300} />
               <ExpenseRow label="Food" icon="🍔" value={expenses.food} onChange={(v) => setExpenses({...expenses, food: v})} max={600} />
               <ExpenseRow label="Phone" icon="📱" value={expenses.phone} onChange={(v) => setExpenses({...expenses, phone: v})} max={150} />
               <ExpenseRow label="Fun" icon="🎮" value={expenses.entertainment} onChange={(v) => setExpenses({...expenses, entertainment: v})} max={300} />
