@@ -496,119 +496,127 @@ export default function MoveOutGuide() {
               })}
             </div>
 
-            {/* Real Map - Muted with overlay */}
-            <div className="bg-gray-900 rounded-2xl overflow-hidden">
-              <div className="p-3 border-b border-gray-800 flex justify-between items-center">
-                <h3 className="font-bold text-sm">🗺️ Explore the Area</h3>
-                <span className="text-xs text-gray-500">Tap to open</span>
-              </div>
-              <div className="relative w-full" style={{ paddingBottom: '40%' }}>
-                <iframe
-                  className="absolute inset-0 w-full h-full opacity-60 grayscale"
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={selectedLocation === 'marina'
-                    ? "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d55420.96690842805!2d-95.04!3d29.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1705600000000!5m2!1sen!2sus"
-                    : "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d55350.12345678901!2d-95.55!3d29.76!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1705600000000!5m2!1sen!2sus"
-                  }
-                />
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-gray-900/40 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Job Distance Diagram */}
+            {/* Job Distance Diagram - THE MAIN VISUAL */}
             <div className="bg-gray-900 rounded-2xl p-4">
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex justify-between items-center mb-1">
                 <h3 className="font-bold">📍 Jobs by Distance</h3>
-                <span className="text-xs text-gray-500">{filteredJobs.length} jobs shown</span>
+                <span className="text-xs text-gray-500">{filteredJobs.length} shown</span>
               </div>
-              <p className="text-xs text-gray-500 mb-4">Each icon = a real job opportunity near you</p>
+              <p className="text-xs text-gray-400 mb-4">Each icon is a real job • Tap to see details</p>
               
-              <div className="relative h-72 flex items-center justify-center">
-                {/* Distance rings with labels */}
+              <div className="relative h-80 flex items-center justify-center bg-gray-950 rounded-xl overflow-hidden">
+                {/* Distance rings */}
                 {[
-                  { dist: 3, label: '3 mi · ~8 min 🚗' },
-                  { dist: 6, label: '6 mi · ~15 min 🚗' },
-                  { dist: 10, label: '10 mi · ~25 min 🚗' }
-                ].map(({ dist, label }) => (
+                  { dist: 3, color: 'border-green-500/40', bg: 'bg-green-500/5' },
+                  { dist: 6, color: 'border-yellow-500/40', bg: 'bg-yellow-500/5' },
+                  { dist: 10, color: 'border-red-500/30', bg: 'bg-red-500/5' }
+                ].map(({ dist, color, bg }, idx) => (
                   <div
                     key={dist}
-                    className="absolute rounded-full border border-gray-700/50"
+                    className={`absolute rounded-full ${color} border-2 ${bg}`}
                     style={{
-                      width: `${(dist / 10) * 85}%`,
-                      height: `${(dist / 10) * 85}%`,
+                      width: `${(dist / 10) * 90}%`,
+                      height: `${(dist / 10) * 90}%`,
                     }}
                   >
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs text-gray-600 bg-gray-900 px-2 whitespace-nowrap">
-                      {label}
+                    <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs px-2 py-0.5 rounded-full font-medium ${
+                      dist === 3 ? 'bg-green-500/20 text-green-400' :
+                      dist === 6 ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-red-500/20 text-red-400'
+                    }`}>
+                      {dist} mi
                     </span>
                   </div>
                 ))}
                 
-                {/* Home pin */}
-                <div className="absolute w-12 h-12 bg-cyan-500 rounded-full flex items-center justify-center z-20 shadow-lg shadow-cyan-500/50 border-3 border-white">
-                  <span className="text-lg">🏠</span>
-                </div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 mt-8 text-xs text-cyan-400 font-medium whitespace-nowrap">
-                  Your Place
+                {/* Home pin - center */}
+                <div className="absolute z-20 flex flex-col items-center">
+                  <div className="w-14 h-14 bg-cyan-500 rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/50 border-4 border-white">
+                    <span className="text-xl">🏠</span>
+                  </div>
+                  <span className="text-xs text-cyan-400 font-bold mt-1 bg-gray-950 px-2 rounded">YOU</span>
                 </div>
                 
-                {/* Job pins - positioned by distance and type */}
+                {/* Job pins */}
                 {filteredJobs.slice(0, 12).map((job, i) => {
                   const angle = (i / 12) * 2 * Math.PI - Math.PI / 2;
-                  const radius = Math.min(job.distance / 11, 1) * 42;
+                  const radius = Math.min(job.distance / 11, 1) * 44;
                   const x = Math.cos(angle) * radius;
                   const y = Math.sin(angle) * radius;
                   
                   const colors = {
-                    food: 'bg-orange-500 shadow-orange-500/50',
-                    retail: 'bg-pink-500 shadow-pink-500/50',
-                    hotel: 'bg-blue-500 shadow-blue-500/50',
-                    warehouse: 'bg-amber-500 shadow-amber-500/50',
-                    construction: 'bg-yellow-400 shadow-yellow-400/50',
-                    trades: 'bg-emerald-500 shadow-emerald-500/50',
-                    auto: 'bg-red-500 shadow-red-500/50',
+                    food: 'bg-orange-500',
+                    retail: 'bg-pink-500',
+                    hotel: 'bg-blue-500',
+                    warehouse: 'bg-amber-500',
+                    construction: 'bg-yellow-400',
+                    trades: 'bg-emerald-500',
+                    auto: 'bg-red-500',
                   };
                   const icons = { 
                     food: '🍔', retail: '🛍️', hotel: '🏨', warehouse: '📦',
                     construction: '🏗️', trades: '🔧', auto: '🚗'
                   };
                   
+                  const isSelected = hoveredJob === job.id;
+                  
                   return (
                     <div
                       key={job.id}
-                      onClick={() => setHoveredJob(hoveredJob === job.id ? null : job.id)}
-                      className={`absolute w-10 h-10 ${colors[job.type] || 'bg-gray-500'} rounded-full flex items-center justify-center shadow-lg border-2 border-white/70 transition-all cursor-pointer hover:scale-110 active:scale-95 ${job.hot ? 'ring-2 ring-red-400 ring-offset-2 ring-offset-gray-900' : ''} ${hoveredJob === job.id ? 'scale-125 z-30' : ''}`}
+                      onClick={() => setHoveredJob(isSelected ? null : job.id)}
+                      className={`absolute flex flex-col items-center transition-all cursor-pointer z-10
+                        ${isSelected ? 'z-30 scale-110' : 'hover:scale-105'}`}
                       style={{
                         left: `calc(50% + ${x}%)`,
                         top: `calc(50% + ${y}%)`,
                         transform: 'translate(-50%, -50%)',
                       }}
-                      title={job.name}
                     >
-                      <span className="text-sm">{icons[job.type] || '💼'}</span>
+                      <div className={`w-11 h-11 ${colors[job.type] || 'bg-gray-500'} rounded-full flex items-center justify-center shadow-lg border-2 ${isSelected ? 'border-white' : 'border-white/60'} ${job.hot ? 'ring-2 ring-red-400 ring-offset-1 ring-offset-gray-950' : ''}`}>
+                        <span className="text-base">{icons[job.type] || '💼'}</span>
+                      </div>
+                      {isSelected && (
+                        <div className="absolute top-12 bg-gray-800 px-2 py-1 rounded text-xs font-medium whitespace-nowrap shadow-lg border border-gray-700">
+                          {job.name}
+                          <div className="text-green-400">{job.pay}</div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
               
               {/* Legend */}
-              <div className="mt-4 pt-3 border-t border-gray-800">
-                <p className="text-xs text-gray-500 text-center mb-2">Tap any job icon above, or scroll down for full list</p>
-                <div className="flex flex-wrap justify-center gap-2 text-xs">
-                  <span className="bg-yellow-400/20 text-yellow-300 px-2 py-1 rounded-full">🏗️ Construction</span>
-                  <span className="bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-full">🔧 Trades</span>
-                  <span className="bg-red-500/20 text-red-300 px-2 py-1 rounded-full">🚗 Auto</span>
-                  <span className="bg-amber-500/20 text-amber-300 px-2 py-1 rounded-full">📦 Labor</span>
-                  <span className="bg-orange-500/20 text-orange-300 px-2 py-1 rounded-full">🍔 Food</span>
-                  <span className="bg-pink-500/20 text-pink-300 px-2 py-1 rounded-full">🛍️ Retail</span>
-                  <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">🏨 Hotel</span>
-                </div>
-                <p className="text-xs text-red-400 text-center mt-2">🔴 Red ring = actively hiring now</p>
+              <div className="mt-4 grid grid-cols-4 gap-2 text-xs">
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-yellow-400" /><span className="text-gray-400">Build</span></div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-emerald-500" /><span className="text-gray-400">Trades</span></div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-500" /><span className="text-gray-400">Auto</span></div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-amber-500" /><span className="text-gray-400">Labor</span></div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-orange-500" /><span className="text-gray-400">Food</span></div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-pink-500" /><span className="text-gray-400">Retail</span></div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-blue-500" /><span className="text-gray-400">Hotel</span></div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full ring-2 ring-red-400 ring-offset-1 ring-offset-gray-900" /><span className="text-gray-400">Hiring!</span></div>
+              </div>
+              
+              {/* Distance guide */}
+              <div className="mt-3 pt-3 border-t border-gray-800 flex justify-around text-xs">
+                <span className="text-green-400">🟢 0-3 mi = close</span>
+                <span className="text-yellow-400">🟡 3-6 mi = doable</span>
+                <span className="text-red-400">🔴 6+ mi = need car</span>
               </div>
             </div>
+            
+            {/* Quick link to maps */}
+            <a
+              href={`https://www.google.com/maps/search/jobs+near+${encodeURIComponent(
+                selectedLocation === 'marina' ? 'Seabrook TX' : 'Memorial Houston TX'
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-gray-800 text-gray-300 text-center py-3 rounded-xl text-sm active:bg-gray-700"
+            >
+              🗺️ Explore area on Google Maps
+            </a>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-2">
