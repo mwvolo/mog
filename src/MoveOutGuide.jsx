@@ -451,133 +451,212 @@ export default function MoveOutGuide() {
         {activeTab === 'jobs' && (
           <div className="space-y-4">
             
-            {/* Header */}
+            {/* Header with job count */}
             <div className={`rounded-2xl p-4 ${
               selectedLocation === 'marina' ? 'bg-cyan-500/20' : 'bg-orange-500/20'
             }`}>
-              <h2 className="font-bold text-lg">{loc.emoji} Jobs Near {loc.name}</h2>
-              <p className="text-gray-400 text-sm mt-1">{loc.vibe}</p>
-              <p className="text-xs text-gray-500 mt-2">
-                🏗️ Construction & trades jobs at the top — good pay, real skills.
-              </p>
-            </div>
-
-            {/* Job Type Filter */}
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
-              {jobTypes.map(type => (
-                <button
-                  key={type.id}
-                  onClick={() => setSelectedJobType(type.id)}
-                  className={`flex-shrink-0 px-4 py-2 rounded-full font-medium transition-all ${
-                    selectedJobType === type.id
-                      ? 'bg-cyan-500 text-white'
-                      : 'bg-gray-800 text-gray-400'
-                  }`}
-                >
-                  {type.icon} {type.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Visual Distance Map */}
-            <div className="bg-gray-900 rounded-2xl p-4">
-              <h3 className="font-bold mb-3">🗺️ Distance Map</h3>
-              <p className="text-xs text-gray-500 mb-4">Tap jobs below to see details</p>
-              
-              <div className="relative h-64 flex items-center justify-center">
-                {/* Distance rings */}
-                {[3, 6, 10].map((dist) => (
-                  <div
-                    key={dist}
-                    className="absolute rounded-full border border-gray-700 border-dashed"
-                    style={{
-                      width: `${(dist / 10) * 80}%`,
-                      height: `${(dist / 10) * 80}%`,
-                    }}
-                  >
-                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs text-gray-600 bg-gray-900 px-1">
-                      {dist}mi
-                    </span>
-                  </div>
-                ))}
-                
-                {/* Home pin */}
-                <div className="absolute w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center z-20 shadow-lg shadow-cyan-500/50 border-2 border-white">
-                  🏠
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="font-bold text-lg">{loc.emoji} Jobs Near {loc.name}</h2>
+                  <p className="text-gray-400 text-sm mt-1">{loc.vibe}</p>
                 </div>
-                
-                {/* Job pins */}
-                {filteredJobs.slice(0, 12).map((job, i) => {
-                  const angle = (i / 12) * 2 * Math.PI - Math.PI / 2;
-                  const radius = Math.min(job.distance / 12, 1) * 42;
-                  const x = Math.cos(angle) * radius;
-                  const y = Math.sin(angle) * radius;
-                  
-                  const colors = {
-                    food: 'bg-orange-500',
-                    retail: 'bg-pink-500',
-                    entertainment: 'bg-purple-500',
-                    hotel: 'bg-blue-500',
-                    warehouse: 'bg-amber-600',
-                    construction: 'bg-yellow-500',
-                    trades: 'bg-emerald-500',
-                    auto: 'bg-red-500',
-                  };
-                  const icons = { 
-                    food: '🍔', retail: '🛍️', entertainment: '🎢', hotel: '🏨', warehouse: '📦',
-                    construction: '🏗️', trades: '🔧', auto: '🚗'
-                  };
-                  
-                  return (
-                    <div
-                      key={job.id}
-                      className={`absolute w-9 h-9 ${colors[job.type] || 'bg-gray-500'} rounded-full flex items-center justify-center shadow-lg border-2 border-white/50 transition-transform active:scale-125 ${job.hot ? 'animate-pulse' : ''}`}
-                      style={{
-                        left: `calc(50% + ${x}%)`,
-                        top: `calc(50% + ${y}%)`,
-                        transform: 'translate(-50%, -50%)',
-                      }}
-                    >
-                      {icons[job.type] || '💼'}
-                    </div>
-                  );
-                })}
+                <div className="text-right">
+                  <div className="text-2xl font-black text-white">{jobs.length}</div>
+                  <div className="text-xs text-gray-400">jobs found</div>
+                </div>
               </div>
-              
-              {/* Legend */}
-              <div className="flex flex-wrap justify-center gap-2 mt-4 pt-3 border-t border-gray-800 text-xs">
-                <span className="bg-yellow-500/20 px-2 py-1 rounded-full">🏗️ Build</span>
-                <span className="bg-emerald-500/20 px-2 py-1 rounded-full">🔧 Trades</span>
-                <span className="bg-red-500/20 px-2 py-1 rounded-full">🚗 Auto</span>
-                <span className="bg-amber-600/20 px-2 py-1 rounded-full">📦 Labor</span>
-                <span className="bg-orange-500/20 px-2 py-1 rounded-full">🍔 Food</span>
-                <span className="bg-pink-500/20 px-2 py-1 rounded-full">🛍️ Retail</span>
+              {!hasCar && (
+                <div className="mt-3 p-2 bg-yellow-500/20 rounded-lg">
+                  <p className="text-yellow-300 text-xs">🚶 No car? Look for jobs under 5 miles or on bus routes</p>
+                </div>
+              )}
+            </div>
+
+            {/* Job Type Filter with counts */}
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
+              {jobTypes.map(type => {
+                const count = type.id === 'all' ? jobs.length : jobs.filter(j => j.type === type.id).length;
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => setSelectedJobType(type.id)}
+                    className={`flex-shrink-0 px-3 py-2 rounded-full font-medium transition-all flex items-center gap-1 ${
+                      selectedJobType === type.id
+                        ? 'bg-cyan-500 text-white'
+                        : 'bg-gray-800 text-gray-400'
+                    }`}
+                  >
+                    {type.icon}
+                    <span>{type.label}</span>
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      selectedJobType === type.id ? 'bg-white/20' : 'bg-gray-700'
+                    }`}>{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Real Map */}
+            <div className="bg-gray-900 rounded-2xl overflow-hidden">
+              <div className="p-3 border-b border-gray-800 flex justify-between items-center">
+                <h3 className="font-bold text-sm">🗺️ Job Locations</h3>
+                <span className="text-xs text-gray-500">Tap map to explore</span>
+              </div>
+              <div className="relative w-full" style={{ paddingBottom: '56%' }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={selectedLocation === 'marina'
+                    ? "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d55420.96690842805!2d-95.09!3d29.54!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sjobs%20near%20seabrook%20tx!5e0!3m2!1sen!2sus!4v1705600000000!5m2!1sen!2sus"
+                    : "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d55350.12345678901!2d-95.56!3d29.76!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sjobs%20near%20memorial%20houston%20tx!5e0!3m2!1sen!2sus!4v1705600000000!5m2!1sen!2sus"
+                  }
+                />
               </div>
             </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="bg-gray-900 rounded-xl p-3 text-center">
+                <div className="text-lg font-bold text-green-400">
+                  {jobs.filter(j => j.hot).length}
+                </div>
+                <div className="text-xs text-gray-500">🔥 Hiring Now</div>
+              </div>
+              <div className="bg-gray-900 rounded-xl p-3 text-center">
+                <div className="text-lg font-bold text-cyan-400">
+                  {jobs.filter(j => j.distance <= 5).length}
+                </div>
+                <div className="text-xs text-gray-500">Under 5 mi</div>
+              </div>
+              <div className="bg-gray-900 rounded-xl p-3 text-center">
+                <div className="text-lg font-bold text-purple-400">
+                  $16+
+                </div>
+                <div className="text-xs text-gray-500">Trades avg</div>
+              </div>
+            </div>
+
+            {/* Recommended for You */}
+            {(() => {
+              const recommended = jobs
+                .filter(j => hasCar || j.distance <= 5)
+                .filter(j => j.hot)
+                .slice(0, 3);
+              
+              if (recommended.length === 0) return null;
+              
+              return (
+                <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl p-4 border border-purple-500/30">
+                  <h3 className="font-bold mb-3">⭐ Recommended for You</h3>
+                  <p className="text-xs text-gray-400 mb-3">
+                    {hasCar ? 'Hot jobs in your area' : 'Hiring now & walkable/bikeable'}
+                  </p>
+                  <div className="space-y-2">
+                    {recommended.map(job => {
+                      const icons = { 
+                        food: '🍔', retail: '🛍️', hotel: '🏨', warehouse: '📦',
+                        construction: '🏗️', trades: '🔧', auto: '🚗'
+                      };
+                      return (
+                        <div key={job.id} className="flex justify-between items-center bg-black/20 rounded-lg p-2">
+                          <div className="flex items-center gap-2">
+                            <span>{icons[job.type]}</span>
+                            <span className="font-medium text-sm">{job.name}</span>
+                          </div>
+                          <span className="text-green-400 font-bold text-sm">{job.pay}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Job List */}
-            <div className="space-y-3">
-              <p className="text-xs text-gray-500 px-1">🔥 = actively hiring now</p>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <p className="text-xs text-gray-500">🔥 = actively hiring</p>
+                <p className="text-xs text-gray-500">{filteredJobs.length} jobs</p>
+              </div>
+              
               {filteredJobs.map(job => {
                 const icons = { 
                   food: '🍔', retail: '🛍️', entertainment: '🎢', hotel: '🏨', warehouse: '📦',
                   construction: '🏗️', trades: '🔧', auto: '🚗'
                 };
+                const colors = {
+                  food: 'border-l-orange-500',
+                  retail: 'border-l-pink-500',
+                  hotel: 'border-l-blue-500',
+                  warehouse: 'border-l-amber-500',
+                  construction: 'border-l-yellow-500',
+                  trades: 'border-l-emerald-500',
+                  auto: 'border-l-red-500',
+                };
+                
+                // Estimate commute time
+                const commuteMin = hasCar 
+                  ? Math.round(job.distance * 2.5) // ~2.5 min per mile by car
+                  : Math.round(job.distance * 12); // ~12 min per mile walking/biking
+                
+                const isExpanded = hoveredJob === job.id;
+                const isReachable = hasCar || job.distance <= 5;
+                
                 return (
-                  <div key={job.id} className="bg-gray-900 rounded-xl p-4 active:bg-gray-800">
+                  <div 
+                    key={job.id} 
+                    onClick={() => setHoveredJob(isExpanded ? null : job.id)}
+                    className={`bg-gray-900 rounded-xl p-4 border-l-4 ${colors[job.type] || 'border-l-gray-500'} 
+                      transition-all cursor-pointer active:scale-[0.98] ${!isReachable ? 'opacity-50' : ''}`}
+                  >
                     <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-lg">{icons[job.type] || '💼'}</span>
                           <span className="font-bold">{job.name}</span>
                           {job.hot && <span className="text-xs bg-red-500 px-2 py-0.5 rounded-full">🔥 Hiring</span>}
                         </div>
-                        <div className="text-sm text-gray-400 mt-1 ml-7">
-                          {job.distance} miles {!hasCar && job.distance > 5 && <span className="text-yellow-500">(far w/o car)</span>}
+                        <div className="flex items-center gap-3 text-sm text-gray-400 mt-1 ml-7">
+                          <span>{job.distance} mi</span>
+                          <span>•</span>
+                          <span>{commuteMin} min {hasCar ? '🚗' : '🚶'}</span>
+                          {!isReachable && <span className="text-yellow-500">• Too far w/o car</span>}
                         </div>
                       </div>
-                      <div className="text-green-400 font-bold text-lg">{job.pay}</div>
+                      <div className="text-right">
+                        <div className="text-green-400 font-bold text-lg">{job.pay}</div>
+                        <div className="text-xs text-gray-500">{isExpanded ? '▲' : '▼'}</div>
+                      </div>
                     </div>
+                    
+                    {/* Expanded details */}
+                    {isExpanded && (
+                      <div className="mt-3 pt-3 border-t border-gray-800 space-y-2">
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div className="bg-gray-800 rounded-lg p-2">
+                            <div className="text-gray-500 text-xs">Job Type</div>
+                            <div className="font-medium capitalize">{job.type}</div>
+                          </div>
+                          <div className="bg-gray-800 rounded-lg p-2">
+                            <div className="text-gray-500 text-xs">Monthly Est.</div>
+                            <div className="font-medium text-green-400">
+                              ${Math.round(parseInt(job.pay.split('-')[0].replace('$','')) * 35 * 4.33)}+
+                            </div>
+                          </div>
+                        </div>
+                        <a
+                          href={`https://www.google.com/search?q=${encodeURIComponent(job.name + ' jobs ' + loc.area + ' TX')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="block w-full bg-cyan-500 text-white text-center py-2 rounded-lg font-medium text-sm active:bg-cyan-600"
+                        >
+                          🔍 Search Jobs
+                        </a>
+                      </div>
+                    )}
                   </div>
                 );
               })}
