@@ -4,22 +4,22 @@ export default function MoveOutGuide() {
   const [activeTab, setActiveTab] = useState('budget');
   const [selectedLocation, setSelectedLocation] = useState('marina');
   const [hasRoommate, setHasRoommate] = useState(false);
-  const [hourlyWage, setHourlyWage] = useState(14);
-  const [hoursPerWeek, setHoursPerWeek] = useState(35);
+  const [hourlyWage, setHourlyWage] = useState(15);
+  const [hoursPerWeek, setHoursPerWeek] = useState(40);
   const [hasCar, setHasCar] = useState(true);
   const [selectedJobType, setSelectedJobType] = useState('all');
   const [showSettings, setShowSettings] = useState(false);
   const [hoveredJob, setHoveredJob] = useState(null);
   
   const [expenses, setExpenses] = useState({
-    food: 300,
+    food: 250,
     phone: 50,
     car: 150,
-    gas: 120,
+    gas: 100,
     carInsurance: 150,
-    entertainment: 100,
+    entertainment: 75,
     savings: 100,
-    other: 50,
+    other: 0,
   });
 
   const locations = {
