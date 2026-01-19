@@ -1,4 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+
+// Analytics helper
+const track = (event, params = {}) => {
+  if (typeof window !== 'undefined' && window.trackEvent) {
+    window.trackEvent(event, params);
+  }
+};
 
 export default function MoveOutGuide() {
   const [activeTab, setActiveTab] = useState('budget');
@@ -10,6 +17,50 @@ export default function MoveOutGuide() {
   const [selectedJobType, setSelectedJobType] = useState('all');
   const [showSettings, setShowSettings] = useState(false);
   const [hoveredJob, setHoveredJob] = useState(null);
+  
+  // Track page load
+  useEffect(() => {
+    track('page_loaded', { timestamp: new Date().toISOString() });
+  }, []);
+  
+  // Tracked setters
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    track('tab_change', { tab });
+  };
+  
+  const handleLocationChange = (loc) => {
+    setSelectedLocation(loc);
+    track('location_change', { location: loc });
+  };
+  
+  const handleRoommateChange = (value) => {
+    setHasRoommate(value);
+    track('roommate_toggle', { has_roommate: value });
+  };
+  
+  const handleCarChange = (value) => {
+    setHasCar(value);
+    track('car_toggle', { has_car: value });
+  };
+  
+  const handleJobClick = (job) => {
+    setHoveredJob(hoveredJob === job.id ? null : job.id);
+    track('job_click', { 
+      job_name: job.name, 
+      job_type: job.type, 
+      job_pay: job.pay,
+      is_hot: job.hot || false
+    });
+  };
+  
+  const handleJobSearch = (job, area) => {
+    track('job_search_click', { 
+      job_name: job.name, 
+      job_type: job.type,
+      area: area
+    });
+  };
   
   const [expenses, setExpenses] = useState({
     utilities: 150,
@@ -146,6 +197,22 @@ export default function MoveOutGuide() {
   const isGood = remaining >= 100;
   const isTight = remaining >= 0 && remaining < 100;
   const isBad = remaining < 0;
+  
+  // Track budget verdict changes
+  useEffect(() => {
+    const verdict = isGood ? 'positive' : isTight ? 'tight' : 'negative';
+    track('budget_calculated', { 
+      verdict,
+      remaining: Math.round(remaining),
+      income: Math.round(netMonthly),
+      expenses: totalExpenses,
+      hourly_wage: hourlyWage,
+      hours_per_week: hoursPerWeek,
+      has_roommate: hasRoommate,
+      has_car: hasCar,
+      location: selectedLocation
+    });
+  }, [remaining]);
 
   const tabs = [
     { id: 'budget', label: 'Budget', icon: '💰' },
@@ -206,7 +273,7 @@ export default function MoveOutGuide() {
             {/* Location Toggle */}
             <div className="flex items-center gap-2 bg-gray-800 p-1 rounded-full">
               <button
-                onClick={() => setSelectedLocation('marina')}
+                onClick={() => handleLocationChange('marina')}
                 className={`p-2 rounded-full transition-all ${
                   selectedLocation === 'marina' ? 'bg-cyan-500 shadow-lg' : ''
                 }`}
@@ -214,7 +281,7 @@ export default function MoveOutGuide() {
                 🌊
               </button>
               <button
-                onClick={() => setSelectedLocation('sandy')}
+                onClick={() => handleLocationChange('sandy')}
                 className={`p-2 rounded-full transition-all ${
                   selectedLocation === 'sandy' ? 'bg-orange-500 shadow-lg' : ''
                 }`}
@@ -242,7 +309,7 @@ export default function MoveOutGuide() {
                 <p className="text-gray-300 text-sm mb-2">Will you have a roommate?</p>
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => setHasRoommate(false)}
+                    onClick={() => handleRoommateChange(false)}
                     className={`p-3 rounded-xl border-2 transition-all ${
                       !hasRoommate 
                         ? 'border-cyan-500 bg-cyan-500/20 text-white' 
@@ -254,7 +321,7 @@ export default function MoveOutGuide() {
                     <div className="text-xs text-gray-500">${selectedLocation === 'marina' ? '650' : '550'}/mo rent</div>
                   </button>
                   <button
-                    onClick={() => setHasRoommate(true)}
+                    onClick={() => handleRoommateChange(true)}
                     className={`p-3 rounded-xl border-2 transition-all ${
                       hasRoommate 
                         ? 'border-purple-500 bg-purple-500/20 text-white' 
@@ -273,7 +340,7 @@ export default function MoveOutGuide() {
                 <p className="text-gray-300 text-sm mb-2">Do you have a car?</p>
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => setHasCar(false)}
+                    onClick={() => handleCarChange(false)}
                     className={`p-3 rounded-xl border-2 transition-all ${
                       !hasCar 
                         ? 'border-green-500 bg-green-500/20 text-white' 
@@ -285,7 +352,7 @@ export default function MoveOutGuide() {
                     <div className="text-xs text-gray-500">Save $400+/mo</div>
                   </button>
                   <button
-                    onClick={() => setHasCar(true)}
+                    onClick={() => handleCarChange(true)}
                     className={`p-3 rounded-xl border-2 transition-all ${
                       hasCar 
                         ? 'border-yellow-500 bg-yellow-500/20 text-white' 
@@ -589,7 +656,7 @@ export default function MoveOutGuide() {
                   return (
                     <div
                       key={job.id}
-                      onClick={() => setHoveredJob(isSelected ? null : job.id)}
+                      onClick={() => handleJobClick(job)}
                       className={`absolute flex flex-col items-center transition-all cursor-pointer z-10
                         ${isSelected ? 'z-30 scale-110' : 'hover:scale-105'}`}
                       style={{
@@ -735,7 +802,7 @@ export default function MoveOutGuide() {
                 return (
                   <div 
                     key={job.id} 
-                    onClick={() => setHoveredJob(isExpanded ? null : job.id)}
+                    onClick={() => handleJobClick(job)}
                     className={`bg-gray-900 rounded-xl p-4 border-l-4 ${colors[job.type] || 'border-l-gray-500'} 
                       transition-all cursor-pointer active:scale-[0.98] ${!isReachable ? 'opacity-50' : ''}`}
                   >
@@ -778,7 +845,7 @@ export default function MoveOutGuide() {
                           href={`https://www.google.com/search?q=${encodeURIComponent(job.name + ' jobs ' + loc.area + ' TX')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e) => { e.stopPropagation(); handleJobSearch(job, loc.area); }}
                           className="block w-full bg-cyan-500 text-white text-center py-2 rounded-lg font-medium text-sm active:bg-cyan-600"
                         >
                           🔍 Search Jobs
@@ -876,7 +943,7 @@ export default function MoveOutGuide() {
             {Object.entries(locations).map(([key, loc]) => (
               <button
                 key={key}
-                onClick={() => setSelectedLocation(key)}
+                onClick={() => handleLocationChange(key)}
                 className={`w-full text-left bg-gray-900 rounded-2xl overflow-hidden border-2 transition-all ${
                   selectedLocation === key
                     ? key === 'marina' ? 'border-cyan-500' : 'border-orange-500'
@@ -1111,7 +1178,7 @@ export default function MoveOutGuide() {
           {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${
                 activeTab === tab.id
                   ? 'text-cyan-400'
