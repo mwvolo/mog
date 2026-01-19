@@ -362,6 +362,35 @@ export default function MoveOutGuide() {
                   <div className="text-xl font-bold text-green-400">${netMonthly.toFixed(0)}</div>
                 </div>
               </div>
+              
+              {/* Tax Breakdown - The Reality Check */}
+              <div className="mt-4 p-3 bg-red-500/10 rounded-xl border border-red-500/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-red-300">🏛️ Where'd the rest go?</span>
+                  <span className="text-red-400 font-bold">-${(grossMonthly - netMonthly).toFixed(0)}/mo</span>
+                </div>
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between text-gray-400">
+                    <span>Federal Income Tax (~10%)</span>
+                    <span className="text-red-400">-${(grossMonthly * 0.10).toFixed(0)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-400">
+                    <span>Social Security (6.2%)</span>
+                    <span className="text-red-400">-${(grossMonthly * 0.062).toFixed(0)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-400">
+                    <span>Medicare (1.45%)</span>
+                    <span className="text-red-400">-${(grossMonthly * 0.0145).toFixed(0)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-500 pt-1 border-t border-gray-800">
+                    <span>Texas State Tax</span>
+                    <span className="text-green-400">$0 🎉</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 italic">
+                  This happens automatically — you never see this money.
+                </p>
+              </div>
             </div>
 
             {/* Expenses Card */}
